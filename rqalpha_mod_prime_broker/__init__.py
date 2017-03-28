@@ -15,13 +15,26 @@
 # limitations under the License.
 
 import click
+
 from rqalpha import cmd_cli
 
-
-def load_mod():
-    pass
+__config__ = {
+    "traders": {
+        "test": "tcp://127.0.0.1:15555",
+    },
+}
 
 
 @cmd_cli.command()
 def pb():
-    print("Prime Broker Start")
+    from .prime_broker import PrimeBroker
+    prime_broker = PrimeBroker(__config__)
+    prime_broker.start()
+
+
+@cmd_cli.command()
+@click.option("-p", "--port")
+def trade_server(port):
+    from .prime_broker import TradeServer
+    trade_server = TradeServer(port)
+    trade_server.start()
